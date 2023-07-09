@@ -15,6 +15,7 @@ class Config(BaseModel):
     master_nickname: str = "主人"
     master_id: Union[List[str], Set[str]] = default
     frined_paht: Path = Path("data/friend")
+    group_request: bool = True
 
     class Config:
         extra = Extra.ignore
@@ -28,6 +29,22 @@ class Friend_request(BaseModel):
     add_flag: str
     add_nickname: str
     add_message_id: List[int]
+
+    class Config:
+        extra = Extra.ignore
+
+
+class Group_Friend_request(BaseModel):
+    """群聊申请用户的信息"""
+
+    add_id: int
+    add_group: int
+    add_comment: str
+    add_flag: str
+    add_nickname: str
+    add_message_id: int
+    add_groupname: str
+    sub_type: str
 
     class Config:
         extra = Extra.ignore

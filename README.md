@@ -28,8 +28,16 @@ __✨Nonebot同意好友✨__
 
 ## 指令
 
+### 好友申请（权限为master_id|SUPERUSER）
+
 - (被动) —— 接受好友请求
 - 同意 —— 同意最近一次好友请求
+- 同意[number] —— 同意指定qq号添加好友
+- (回复消息)同意 —— 同意改申请的对象
+
+### 群聊申请(权限为群主|管理|master_id|SUPERUSER)
+
+- (被动) —— 接受群聊申请
 - 同意[number] —— 同意指定qq号添加好友
 - (回复消息)同意 —— 同意改申请的对象
 
@@ -38,9 +46,10 @@ __✨Nonebot同意好友✨__
 不知道可以不写
 知道就按下面参数改添加到env中
 
-    bot_nickname: str= '宁宁'
-    master_nickname: str = '主人'
+    bot_nickname = '宁宁'
+    master_nickname = '主人'
     master_id = ['114514']
+    group_request = True      # 开启群聊申请处理
 
 
 ## 🙈 其他
