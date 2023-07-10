@@ -29,7 +29,9 @@ async def save_request_data(friend_requests: List[Friend_request]):
     """保存好友申请信息"""
     with open(friend_file, mode="w", encoding="utf-8") as f:
         friend_dict_list = [fr.dict() for fr in friend_requests]
-        json.dump(friend_dict_list, f, ensure_ascii=False, indent=4)
+        json.dump(
+            friend_dict_list, f, cls=FriendRequestEncoder, ensure_ascii=False, indent=4
+        )
 
 
 async def save_msg(msg: Friend_request):
@@ -93,8 +95,12 @@ async def get_group_request_data():
     """获取全部群聊申请信息"""
     try:
         with open(group_file, mode="r", encoding="utf-8") as f:
-            friend_requests: Dict[str, List[Group_Friend_request]] = json.load(f)
-    except FileNotFoundError:
+            data: Dict[str, List[Dict[str, Union[str, int]]]] = json.load(f)
+            friend_requests: Dict[str, List[Group_Friend_request]] = {
+                key: [Group_Friend_request(**item) for item in value]  # type: ignore
+                for key, value in data.items()
+            }
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
         friend_requests: Dict[str, List[Group_Friend_request]] = {}
     return friend_requests
 
@@ -102,9 +108,17 @@ async def get_group_request_data():
 async def save_group_request_data(
     friend_requests: Dict[str, List[Group_Friend_request]]
 ):
+    _request = await get_group_request_data()
+    _request.update(friend_requests)
     """保存群聊申请信息"""
     with open(group_file, mode="w", encoding="utf-8") as f:
-        json.dump(friend_requests, f, ensure_ascii=False, indent=4)
+        json.dump(
+            _request,
+            f,
+            cls=GroupFriendRequestEncoder,
+            ensure_ascii=False,
+            indent=4,
+        )
 
 
 async def save_group_msg(msg: Group_Friend_request, group_id: str):
@@ -162,11 +176,19 @@ async def pass_group(
     """同意群聊操作"""
     if isinstance(add_id, int):
         for one_request in friend_requests:
+            print(one_request, type(one_request))
             if add_id == one_request.add_message_id:
                 await bot.set_group_add_request(
                     flag=one_request.add_flag,
                     approve=True,
                     sub_type=one_request.sub_type,
+                )
+                for one in friend_requests:
+                    if int(one.add_id) == add_id:
+                        friend_requests.remove(one)
+
+                await save_group_request_data(
+                    {str(one_request.add_group): friend_requests}
                 )
                 return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     else:
@@ -176,6 +198,13 @@ async def pass_group(
                     flag=one_request.add_flag,
                     approve=True,
                     sub_type=one_request.sub_type,
+                )
+                for one in friend_requests:
+                    if str(one.add_id) == add_id:
+                        friend_requests.remove(one)
+
+                await save_group_request_data(
+                    {str(one_request.add_group): friend_requests}
                 )
                 return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     return "没有找到可以同意的申请"

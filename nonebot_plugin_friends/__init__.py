@@ -24,7 +24,7 @@ from .utils import *
 from .event import *
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __plugin_meta__ = PluginMetadata(
     name="远程同意好友",
     description="自定义远程同意好友和群聊申请",
@@ -78,7 +78,7 @@ async def _(
                     f"QQ：{add_qq} 请求添加{config.bot_nickname}为好友!\n请求添加时间：{realtime}\n验证信息为：{add_comment}"
                 ),
             )
-        )["message"]
+        )["message_id"]
         add_message_id.append(add_message)
     friend_request = Friend_request(
         add_id=int(add_qq),
@@ -135,10 +135,10 @@ async def _(
         await bot.send_group_msg(
             group_id=int(add_group),
             message=Message(
-                f"QQ：{add_qq} 请求添加{config.bot_nickname}为好友!\n请求添加时间：{realtime}\n验证信息为：{add_comment}"
+                f"QQ：{add_qq} 请求请入本群!\n请求添加时间：{realtime}\n验证信息为：{add_comment}"
             ),
         )
-    )["message"]
+    )["message_id"]
     friend_request = Group_Friend_request(
         add_id=int(add_qq),
         add_group=add_group,
@@ -149,6 +149,7 @@ async def _(
         add_groupname=add_groupname,
         sub_type=sub_type,
     )
+    logger.info("来着")
     await save_group_msg(friend_request, str(add_group))
 
 

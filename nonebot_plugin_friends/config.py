@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Union, Set
 from pydantic import BaseModel, Extra
-
+import json
 
 from nonebot import get_driver
 
@@ -48,6 +48,20 @@ class Group_Friend_request(BaseModel):
 
     class Config:
         extra = Extra.ignore
+
+
+class FriendRequestEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Friend_request):
+            return obj.dict()
+        return super().default(obj)
+
+
+class GroupFriendRequestEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Group_Friend_request):
+            return obj.dict()
+        return super().default(obj)
 
 
 config = Config.parse_obj(get_driver().config)
