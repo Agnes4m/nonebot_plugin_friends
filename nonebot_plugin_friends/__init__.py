@@ -1,28 +1,27 @@
-import time
 import json
-
+import time
+from typing import List
 
 from nonebot.adapters.onebot.v11 import (
-    Bot,
-    FriendRequestEvent,
-    Message,
-    PrivateMessageEvent,
-    GroupMessageEvent,
     GROUP_ADMIN,
     GROUP_OWNER,
+    Bot,
+    FriendRequestEvent,
+    GroupMessageEvent,
+    GroupRequestEvent,
+    Message,
+    PrivateMessageEvent,
 )
-from nonebot.permission import SUPERUSER
-from nonebot.matcher import Matcher
-from nonebot.plugin import on_command, on_request
-from nonebot.params import CommandArg
 from nonebot.log import logger
-from nonebot.plugin import PluginMetadata
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata, on_command, on_request
 
-
-from .config import *
-from .utils import *
-from .event import *
-
+from .config import FriendRequest, GroupFriendRequest, config
+from .event import pass_group_request, pass_request, save_group_msg, save_msg
+from .rule import rule_, rule_group
+from .utils import add_friend, add_group_friend
 
 __version__ = "0.1.1"
 __plugin_meta__ = PluginMetadata(
@@ -39,8 +38,8 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-add_friend = on_request(Friend_, priority=1)
-group_add_friend = on_request(Group_Friend, priority=1)
+add_friend = on_request(add_friend, priority=1)
+group_add_friend = on_request(add_group_friend, priority=1)
 
 
 agree_qq_add = on_command("pass", aliases={"允许", "通过", "同意"}, priority=1, rule=rule_)
@@ -80,14 +79,14 @@ async def _(
             )
         )["message_id"]
         add_message_id.append(add_message)
-    friend_request = Friend_request(
+    friendrequest = FriendRequest(
         add_id=int(add_qq),
         add_comment=add_comment,
         add_flag=add_flag,
         add_nickname=add_nickname,
         add_message_id=add_message_id,
     )
-    await save_msg(friend_request)
+    await save_msg(friendrequest)
 
 
 @agree_qq_add.handle()
@@ -107,7 +106,7 @@ async def _(
         else:
             await matcher.finish()
 
-    matcher.stop_propagation
+    matcher.stop_propagation()
 
 
 @group_add_friend.handle()
@@ -139,7 +138,7 @@ async def _(
             ),
         )
     )["message_id"]
-    friend_request = Group_Friend_request(
+    friendrequest = GroupFriendRequest(
         add_id=int(add_qq),
         add_group=add_group,
         add_comment=add_comment,
@@ -150,7 +149,7 @@ async def _(
         sub_type=sub_type,
     )
     logger.info("来着")
-    await save_group_msg(friend_request, str(add_group))
+    await save_group_msg(friendrequest, str(add_group))
 
 
 @agree_group_add.handle()
@@ -172,4 +171,4 @@ async def _(
         else:
             await matcher.finish()
 
-    matcher.stop_propagation
+    matcher.stop_propagation()

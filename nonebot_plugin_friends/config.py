@@ -1,9 +1,9 @@
-from pathlib import Path
-from typing import List, Union, Set
-from pydantic import BaseModel, Extra
 import json
+from pathlib import Path
+from typing import List, Set, Union
 
 from nonebot import get_driver
+from pydantic import BaseModel, Extra
 
 default = get_driver().config.superusers
 
@@ -21,7 +21,7 @@ class Config(BaseModel):
         extra = Extra.ignore
 
 
-class Friend_request(BaseModel):
+class FriendRequest(BaseModel):
     """添加用户的信息"""
 
     add_id: int
@@ -34,7 +34,7 @@ class Friend_request(BaseModel):
         extra = Extra.ignore
 
 
-class Group_Friend_request(BaseModel):
+class GroupFriendRequest(BaseModel):
     """群聊申请用户的信息"""
 
     add_id: int
@@ -52,14 +52,14 @@ class Group_Friend_request(BaseModel):
 
 class FriendRequestEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, Friend_request):
+        if isinstance(obj, FriendRequest):
             return obj.dict()
         return super().default(obj)
 
 
 class GroupFriendRequestEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, Group_Friend_request):
+        if isinstance(obj, GroupFriendRequest):
             return obj.dict()
         return super().default(obj)
 

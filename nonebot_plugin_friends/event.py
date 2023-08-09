@@ -1,11 +1,16 @@
-from pathlib import Path
-from typing import List, Union, Optional, Dict
 import json
+from typing import Dict, List, Union
 
-from nonebot.adapters.onebot.v11 import FriendRequestEvent
-from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot
-from .config import *
+from nonebot.log import logger
+
+from .config import (
+    FriendRequest,
+    FriendRequestEncoder,
+    GroupFriendRequest,
+    GroupFriendRequestEncoder,
+    config,
+)
 
 friend_file = config.frined_paht.joinpath("friend.json")
 group_file = config.frined_paht.joinpath("group.json")
@@ -14,27 +19,26 @@ group_file = config.frined_paht.joinpath("group.json")
 async def get_request_data():
     """获取全部好友申请信息"""
     try:
-        with open(friend_file, mode="r", encoding="utf-8") as f:
+        with friend_file.open(mode="r", encoding="utf-8") as f:
             friend_dict_list: List[dict] = json.load(f)
-            friend_requests: List[Friend_request] = [
-                Friend_request.parse_obj(friend_dict)
-                for friend_dict in friend_dict_list
+            friend_requests: List[FriendRequest] = [
+                FriendRequest.parse_obj(friend_dict) for friend_dict in friend_dict_list
             ]
     except FileNotFoundError:
-        friend_requests: List[Friend_request] = []
+        friend_requests: List[FriendRequest] = []
     return friend_requests
 
 
-async def save_request_data(friend_requests: List[Friend_request]):
+async def save_request_data(friend_requests: List[FriendRequest]):
     """保存好友申请信息"""
-    with open(friend_file, mode="w", encoding="utf-8") as f:
+    with friend_file.open(mode="w", encoding="utf-8") as f:
         friend_dict_list = [fr.dict() for fr in friend_requests]
         json.dump(
             friend_dict_list, f, cls=FriendRequestEncoder, ensure_ascii=False, indent=4
         )
 
 
-async def save_msg(msg: Friend_request):
+async def save_msg(msg: FriendRequest):
     """好友事件添加保存"""
 
     # 加载已保存的好友请求
@@ -59,18 +63,17 @@ async def pass_request(add_id: Union[int, str, None], bot: Bot):
     friend_requests = await get_request_data()
     if not friend_requests:
         return "暂时没有申请"
-    elif not add_id:
+    if not add_id:
         logger.info("开始同意最近一次好友请求")
         last_requests = friend_requests[-1]
         friend_requests.pop()
         return await pass_one([last_requests], last_requests.add_id, bot)
-    else:
-        logger.info("同意指定好友事件")
-        return await pass_one(friend_requests, add_id, bot)
+    logger.info("同意指定好友事件")
+    return await pass_one(friend_requests, add_id, bot)
 
 
 async def pass_one(
-    friend_requests: List[Friend_request], add_id: Union[int, str], bot: Bot
+    friend_requests: List[FriendRequest], add_id: Union[int, str], bot: Bot
 ):
     """同意好友操作"""
     if isinstance(add_id, int):
@@ -94,24 +97,22 @@ async def pass_one(
 async def get_group_request_data():
     """获取全部群聊申请信息"""
     try:
-        with open(group_file, mode="r", encoding="utf-8") as f:
+        with group_file.open(mode="r", encoding="utf-8") as f:
             data: Dict[str, List[Dict[str, Union[str, int]]]] = json.load(f)
-            friend_requests: Dict[str, List[Group_Friend_request]] = {
-                key: [Group_Friend_request(**item) for item in value]  # type: ignore
+            friend_requests: Dict[str, List[GroupFriendRequest]] = {
+                key: [GroupFriendRequest(**item) for item in value]  # type: ignore
                 for key, value in data.items()
             }
     except (FileNotFoundError, json.decoder.JSONDecodeError):
-        friend_requests: Dict[str, List[Group_Friend_request]] = {}
+        friend_requests: Dict[str, List[GroupFriendRequest]] = {}
     return friend_requests
 
 
-async def save_group_request_data(
-    friend_requests: Dict[str, List[Group_Friend_request]]
-):
+async def save_group_request_data(friend_requests: Dict[str, List[GroupFriendRequest]]):
     _request = await get_group_request_data()
     _request.update(friend_requests)
     """保存群聊申请信息"""
-    with open(group_file, mode="w", encoding="utf-8") as f:
+    with group_file.open(mode="w", encoding="utf-8") as f:
         json.dump(
             _request,
             f,
@@ -121,7 +122,7 @@ async def save_group_request_data(
         )
 
 
-async def save_group_msg(msg: Group_Friend_request, group_id: str):
+async def save_group_msg(msg: GroupFriendRequest, group_id: str):
     """群聊事件添加"""
 
     # 加载已保存的好友请求
@@ -152,24 +153,21 @@ async def pass_group_request(add_id: Union[int, str, None], group_id: str, bot: 
     friend_requests = await get_group_request_data()
     if not friend_requests:
         return "暂时没有申请"
-    elif add_id is None:
+    if add_id is None:
         logger.info("开始同意最近一次好友请求")
         if group_id in friend_requests and friend_requests[group_id]:
             last_requests = friend_requests[group_id][-1]
             friend_requests[group_id].pop()
             return await pass_group([last_requests], last_requests.add_id, bot)
-        else:
-            return "暂时没有申请"
-    else:
-        logger.info("同意指定好友事件")
-        if group_id in friend_requests and friend_requests[group_id]:
-            return await pass_group(friend_requests[group_id], add_id, bot)
-        else:
-            return "暂时没有申请"
+        return "暂时没有申请"
+    logger.info("同意指定好友事件")
+    if group_id in friend_requests and friend_requests[group_id]:
+        return await pass_group(friend_requests[group_id], add_id, bot)
+    return "暂时没有申请"
 
 
 async def pass_group(
-    friend_requests: List[Group_Friend_request],
+    friend_requests: List[GroupFriendRequest],
     add_id: Union[int, str],
     bot: Bot,
 ):
