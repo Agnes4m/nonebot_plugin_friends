@@ -21,10 +21,10 @@ from nonebot.plugin import on_command, on_request
 from .config import FriendRequest, GroupFriendRequest, config
 from .event import pass_group_request, pass_request, save_group_msg, save_msg
 from .rule import rule_
-from .utils import friend_add, group_friend_add
+from .utils import add_friend, add_group_friend
 
-friend_add = on_request(friend_add, priority=1)
-group_friend_add = on_request(group_friend_add, priority=1)
+friend_add = on_request(add_friend, priority=1)
+group_friend_add = on_request(add_group_friend, priority=1)
 
 
 @friend_add.handle()
