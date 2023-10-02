@@ -49,7 +49,7 @@ async def _(
             await bot.send_private_msg(
                 user_id=int(su_qq),
                 message=Message(
-                    f"QQ：{add_qq} 请求添加{config.bot_nickname}为好友!\n请求添加时间：{realtime}\n验证信息为：{add_comment}"
+                    f"QQ：{add_qq} 请求添加{config.bot_nickname}为好友!\n请求添加时间：{realtime}\n验证信息为：{add_comment}",
                 ),
             )
         )["message_id"]
@@ -89,7 +89,7 @@ async def _(
         await bot.send_group_msg(
             group_id=int(add_group),
             message=Message(
-                f"QQ：{add_qq} 请求请入本群!\n请求添加时间：{realtime}\n验证信息为：{add_comment}"
+                f"QQ：{add_qq} 请求请入本群!\n请求添加时间：{realtime}\n验证信息为：{add_comment}",
             ),
         )
     )["message_id"]
@@ -118,7 +118,10 @@ agree_qq_add = on_command(
 
 @agree_qq_add.handle()
 async def _(
-    bot: Bot, event: PrivateMessageEvent, matcher: Matcher, arg: Message = CommandArg()
+    bot: Bot,
+    event: PrivateMessageEvent,
+    matcher: Matcher,
+    arg: Message = CommandArg(),
 ):
     if event.reply:
         add_id = event.reply.message_id
@@ -138,7 +141,10 @@ async def _(
 
 @agree_qq_add.handle()
 async def _(
-    bot: Bot, event: GroupMessageEvent, matcher: Matcher, arg: Message = CommandArg()
+    bot: Bot,
+    event: GroupMessageEvent,
+    matcher: Matcher,
+    arg: Message = CommandArg(),
 ):
     if event.reply:
         add_id = event.reply.message_id

@@ -34,7 +34,11 @@ async def save_request_data(friend_requests: List[FriendRequest]):
     with friend_file.open(mode="w", encoding="utf-8") as f:
         friend_dict_list = [fr.dict() for fr in friend_requests]
         json.dump(
-            friend_dict_list, f, cls=FriendRequestEncoder, ensure_ascii=False, indent=4
+            friend_dict_list,
+            f,
+            cls=FriendRequestEncoder,
+            ensure_ascii=False,
+            indent=4,
         )
 
 
@@ -73,7 +77,9 @@ async def pass_request(add_id: Union[int, str, None], bot: Bot):
 
 
 async def pass_one(
-    friend_requests: List[FriendRequest], add_id: Union[int, str], bot: Bot
+    friend_requests: List[FriendRequest],
+    add_id: Union[int, str],
+    bot: Bot,
 ):
     """同意好友操作"""
     if isinstance(add_id, int):
@@ -81,14 +87,18 @@ async def pass_one(
             for one_message_id in one_request.add_message_id:
                 if add_id == one_message_id:
                     await bot.set_friend_add_request(
-                        flag=one_request.add_flag, approve=True, remark=""
+                        flag=one_request.add_flag,
+                        approve=True,
+                        remark="",
                     )
                     return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     else:
         for one_request in friend_requests:
             if add_id == one_request.add_id:
                 await bot.set_friend_add_request(
-                    flag=one_request.add_flag, approve=True, remark=""
+                    flag=one_request.add_flag,
+                    approve=True,
+                    remark="",
                 )
                 return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     return "没有找到可以同意的申请"
@@ -186,7 +196,7 @@ async def pass_group(
                         friend_requests.remove(one)
 
                 await save_group_request_data(
-                    {str(one_request.add_group): friend_requests}
+                    {str(one_request.add_group): friend_requests},
                 )
                 return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     else:
@@ -202,7 +212,7 @@ async def pass_group(
                         friend_requests.remove(one)
 
                 await save_group_request_data(
-                    {str(one_request.add_group): friend_requests}
+                    {str(one_request.add_group): friend_requests},
                 )
                 return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
     return "没有找到可以同意的申请"
