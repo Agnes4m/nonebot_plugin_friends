@@ -2,11 +2,10 @@ import json
 from pathlib import Path
 from typing import List, Set, Union
 
-from nonebot import get_driver
+from nonebot import get_driver, get_plugin_config
 from pydantic import BaseModel, Extra
-from nonebot import get_plugin_config
-default = get_driver().config.superusers
 
+default = get_driver().config.superusers
 
 
 class ConfigModel(BaseModel):
@@ -52,14 +51,14 @@ class GroupFriendRequest(BaseModel):
 
 
 class FriendRequestEncoder(json.JSONEncoder):
-    def default(self, obj):
+    def _default(self, obj):
         if isinstance(obj, FriendRequest):
             return obj.dict()
         return super().default(obj)
 
 
 class GroupFriendRequestEncoder(json.JSONEncoder):
-    def default(self, obj):
+    def _default(self, obj):
         if isinstance(obj, GroupFriendRequest):
             return obj.dict()
         return super().default(obj)
