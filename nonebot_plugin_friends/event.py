@@ -100,7 +100,9 @@ async def pass_one(
                     approve=True,
                     remark="",
                 )
-                return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                return (
+                    f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                )
     return "没有找到可以同意的申请"
 
 
@@ -165,13 +167,13 @@ async def pass_group_request(add_id: Union[int, str, None], group_id: str, bot: 
         return "暂时没有申请"
     if add_id is None:
         logger.info("开始同意最近一次好友请求")
-        if group_id in friend_requests and friend_requests[group_id]:
+        if friend_requests.get(group_id):
             last_requests = friend_requests[group_id][-1]
             friend_requests[group_id].pop()
             return await pass_group([last_requests], last_requests.add_id, bot)
         return "暂时没有申请"
     logger.info("同意指定好友事件")
-    if group_id in friend_requests and friend_requests[group_id]:
+    if friend_requests.get(group_id):
         return await pass_group(friend_requests[group_id], add_id, bot)
     return "暂时没有申请"
 
@@ -198,7 +200,9 @@ async def pass_group(
                 await save_group_request_data(
                     {str(one_request.add_group): friend_requests},
                 )
-                return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                return (
+                    f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                )
     else:
         for one_request in friend_requests:
             if add_id == one_request.add_id:
@@ -214,5 +218,7 @@ async def pass_group(
                 await save_group_request_data(
                     {str(one_request.add_group): friend_requests},
                 )
-                return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                return (
+                    f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
+                )
     return "没有找到可以同意的申请"
