@@ -4,11 +4,12 @@ from typing import List, Set, Union
 
 from nonebot import get_driver
 from pydantic import BaseModel, Extra
-
+from nonebot import get_plugin_config
 default = get_driver().config.superusers
 
 
-class Config(BaseModel):
+
+class ConfigModel(BaseModel):
     """基本配置"""
 
     bot_nickname: str = "宁宁"
@@ -64,10 +65,4 @@ class GroupFriendRequestEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-config = Config.parse_obj(get_driver().config)
-
-if not config.frined_paht.exists() or not config.frined_paht.is_dir():
-    config.frined_paht.mkdir(0o755, parents=True, exist_ok=True)
-
-
-super_id = config.master_id
+config = get_plugin_config(ConfigModel)
