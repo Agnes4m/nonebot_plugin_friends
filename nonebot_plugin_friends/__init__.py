@@ -3,7 +3,7 @@ from nonebot.plugin import PluginMetadata
 from .config import ConfigModel
 from .matcher import *  # noqa: F403
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __plugin_meta__ = PluginMetadata(
     name="远程同意好友",
     description="自定义远程同意好友和群聊申请",

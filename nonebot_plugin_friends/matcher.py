@@ -140,25 +140,24 @@ async def _(
 
 
 @agree_qq_add.handle()
-async def _(
+async def handle_group_request(
     bot: Bot,
     event: GroupMessageEvent,
     matcher: Matcher,
     arg: Message = CommandArg(),
 ):
+    """处理群聊请求的事件"""
     if event.reply:
         add_id = event.reply.message_id
         await pass_group_request(add_id, str(event.group_id), bot)
-    elif not arg:
-        await matcher.finish()
-    # if not arg:
-    #     await pass_group_request(None, str(event.group_id), bot)
-    else:
+    elif arg:
         add_id = arg.extract_plain_text()
         if add_id.isdigit():
-            msg = await pass_group_request(str(add_id), str(event.group_id), bot)
+            msg = await pass_group_request(add_id, str(event.group_id), bot)
             await matcher.send(msg)
         else:
             await matcher.finish()
+    else:
+        await matcher.finish()
 
     matcher.stop_propagation()

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List, Set, Union
+from typing import List, Optional, Set, Union
 
 from nonebot import get_driver, get_plugin_config
 from pydantic import BaseModel, Extra
@@ -25,7 +25,7 @@ class FriendRequest(BaseModel):
     """添加用户的信息"""
 
     add_id: int
-    add_comment: str
+    add_comment: Optional[str]
     add_flag: str
     add_nickname: str
     add_message_id: List[int]
@@ -39,7 +39,7 @@ class GroupFriendRequest(BaseModel):
 
     add_id: int
     add_group: int
-    add_comment: str
+    add_comment: Optional[str]
     add_flag: str
     add_nickname: str
     add_message_id: int
