@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD026 MD031 MD033 MD036 MD041 MD046 MD051 MD050-->
 <div align="center">
   <img src="https://raw.githubusercontent.com/Agnes4m/nonebot_plugin_l4d2_server/main/image/logo.png" width="180" height="180"  alt="AgnesDigitalLogo">
   <br>
@@ -26,6 +27,58 @@ __✨Nonebot同意好友✨__
     <img src="https://img.shields.io/badge/nonebot-2.0.0-red.svg" alt="NoneBot">
 </div>
 
+## 安装
+
+以下提到的方法 任选**其一**即可
+
+<details open>
+<summary>[推荐] 使用 nb-cli 安装</summary>
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+
+```bash
+nb plugin install nonebot_plugin_friends
+```
+
+</details>
+
+<details>
+<summary>使用包管理器安装</summary>
+在 nonebot2 项目的插件目录下, 打开命令行, 根据你使用的包管理器, 输入相应的安装命令
+
+<details>
+<summary>pip</summary>
+
+```bash
+pip install nonebot_plugin_friends
+```
+
+</details>
+<details>
+<summary>pdm</summary>
+
+```bash
+pdm add nonebot_plugin_friends
+```
+
+</details>
+<details>
+<summary>poetry</summary>
+
+```bash
+poetry add nonebot_plugin_friends
+```
+
+</details>
+<details>
+<summary>conda</summary>
+
+```bash
+conda install nonebot_plugin_friends
+```
+
+</details>
+</details>
+
 ## 指令
 
 ### 好友申请（权限为master_id|SUPERUSER）
@@ -51,9 +104,7 @@ __✨Nonebot同意好友✨__
     master_id = ['114514']
     group_request = True      # 开启群聊申请处理
 
-
 ## 🙈 其他
 
 - 本项目仅供学习使用，请勿用于商业用途，喜欢该项目可以Star或者提供PR
 - [爱发电](https://afdian.net/a/agnes_digital)
-

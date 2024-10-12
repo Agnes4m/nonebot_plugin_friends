@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Set, Union
 
 from nonebot import get_driver, get_plugin_config
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 default = get_driver().config.superusers
 
@@ -17,8 +17,6 @@ class ConfigModel(BaseModel):
     frined_paht: Path = Path("data/friend")
     group_request: bool = True
 
-    class Config:
-        extra = Extra.ignore
 
 
 class FriendRequest(BaseModel):
@@ -29,9 +27,6 @@ class FriendRequest(BaseModel):
     add_flag: str
     add_nickname: str
     add_message_id: List[int]
-
-    class Config:
-        extra = Extra.ignore
 
 
 class GroupFriendRequest(BaseModel):
@@ -45,9 +40,6 @@ class GroupFriendRequest(BaseModel):
     add_message_id: int
     add_groupname: str
     sub_type: str
-
-    class Config:
-        extra = Extra.ignore
 
 
 class FriendRequestEncoder(json.JSONEncoder):
