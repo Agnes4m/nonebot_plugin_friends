@@ -18,7 +18,6 @@ class ConfigModel(BaseModel):
     group_request: bool = True
 
 
-
 class FriendRequest(BaseModel):
     """添加用户的信息"""
 
