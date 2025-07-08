@@ -78,15 +78,14 @@ async def pass_request(add_id: Union[int, str, None], bot: Bot) -> str:
 
 
 async def pass_one(
-    friend_requests: List[FriendRequest], add_id: Union[int, str], bot: Bot,
+    friend_requests: List[FriendRequest],
+    add_id: Union[int, str],
+    bot: Bot,
 ) -> str:
     """同意好友操作"""
     for one_request in friend_requests:
-        if (
-            isinstance(add_id, int)
-            and add_id in one_request.add_message_id
-            or isinstance(add_id, str)
-            and add_id == one_request.add_id
+        if (isinstance(add_id, int) and add_id in one_request.add_message_id) or (
+            isinstance(add_id, str) and add_id == one_request.add_id
         ):
             await approve_request(bot, one_request)
             return f"已经同意{one_request.add_nickname}({one_request.add_id})的好友申请"
@@ -144,7 +143,9 @@ async def save_group_msg(msg: GroupFriendRequest, group_id: str) -> None:
 
 
 async def pass_group_request(
-    add_id: Union[int, str, None], group_id: str, bot: Bot,
+    add_id: Union[int, str, None],
+    group_id: str,
+    bot: Bot,
 ) -> str:
     """同意群聊事件
     - str: qq号
@@ -170,7 +171,9 @@ async def pass_group_request(
 
 
 async def pass_group(
-    friend_requests: List[GroupFriendRequest], add_id: Union[int, str], bot: Bot,
+    friend_requests: List[GroupFriendRequest],
+    add_id: Union[int, str],
+    bot: Bot,
 ) -> str:
     """同意群聊操作"""
     for one_request in friend_requests:
